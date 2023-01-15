@@ -12,8 +12,8 @@ using namespace std;
 //[PART2] input&output, question, life.
 //[PART3] setting level, play music, play time
 
-#define MAGIC_KEY 224
-#define SPACE 32
+#define MAGIC_KEY 224	//상하좌우 화살표가 들어올때 먼저 들어오는 숫자
+#define SPACE 32		//스페어 키 값
 #define KEY_NUM 4
 #define LIFE 3
 #define MAX_LEVEL 11
@@ -32,26 +32,26 @@ enum KEYBOARD
 	DOWN = 80
 };
 
-//Cursor move
-void gotoxy(int x, int y)
+//콘솔 커서 이동
+void gotoxy(int x, int y)//커서를 특정 위치로 이동
 {
-	COORD Pos;
+	COORD Pos;//x,y를 가지고 있는 구조체 
 	Pos.X = 2 * x;
 	Pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
 
-//title, console size
+//콘솔 크기,타이틀
 void SetConsoleView()
 {
-	system("mode con:cols=50 lines=20");
-	system("title DanceDance");
+	system("mode con:cols=50 lines=20");	//가로 50, 세로 20
+	system("title Dance");				//타이틀 정하기
 }
 
 //-----------Draw-----------------
-void DrawReadyGame()
+void DrawReadyGame()//게임 첫 화면 그리기
 {
-	system("cls");
+	system("cls");		//화면를 클리어 해줌
 	gotoxy(5, 2);
 	cout << "******************************";
 	gotoxy(5, 3);
@@ -60,12 +60,13 @@ void DrawReadyGame()
 	cout << "******************************";
 	gotoxy(10, 8);
 	cout << "GameStart";
-	gotoxy(10, 9);
-	cout << "GameInfo";
+//	gotoxy(10, 9);
+//	cout << "GameInfo";
 	gotoxy(10, 10);
 	cout << "Quit" << endl;
 }
-
+//정보 화면
+/*
 void DrawInfoGame()
 {
 	system("cls");
@@ -81,8 +82,8 @@ void DrawInfoGame()
 	cout << "*******************************************";
 	gotoxy(1, 10);
 	cout << "|Music - https://www.youtube.com/HYPMUSIC";
-}
-
+}*/
+//시작 화면 그리기
 void DrawStartGame(const int life, const int score, const string questionStr, const string answerStr)
 {
 	system("cls");
@@ -97,9 +98,10 @@ void DrawStartGame(const int life, const int score, const string questionStr, co
 	gotoxy(4, 10);
 	cout << "A : " << answerStr;
 	gotoxy(4, 12);
-	cout << "press SPACE! after input done.";
+	cout << "SPACE!를 눌러야 합니다.";
 	gotoxy(2, 18);
 	cout << "*******************************************" << endl;
+
 }
 
 //게임 오버 그리기
@@ -119,45 +121,45 @@ void DrawGameOver(const int playTime)
 //커서 움직이는것 출력
 void DrawUserCursor(int& y)
 {
-	if (y <= 0)
+	if (y <= 0)			//커서가 위로 그만 올라가게 하기
 	{
 		y = 0;
 	}
-	else if (y >= 2)
+	else if (y >= 2)	//커서가 그만 아래로 내려가게 하기
 	{
 		y = 2;
 	}
 
-	gotoxy(9, 8 + y);
+	gotoxy(9, 8 + y);	//위치 조정
 	cout << ">";
 }
 
 //-----------Func-----------------
-MENU ReadyGame()
+MENU ReadyGame()//게임 기능
 {
-	int y = 0;
-	int input = 0;
-	while (true)
+	int y = 0;				//커서의 y위치
+	int input = 0;			//키보드에 입력받을 변수
+	while (true)			//게임 루프
 	{
-		DrawReadyGame();
-		DrawUserCursor(y);
-		input = _getch();
-		//→←↑↓
-		if (input == MAGIC_KEY)
+		DrawReadyGame();	//게임 첫 화면 그리기
+		DrawUserCursor(y);	//커서 움직임
+		input = _getch();	//_getch():사용자가 입력한 키에 대한 값을 아스키코드로 반환
+		//→←↑↓			
+		if (input == MAGIC_KEY)		//224를 받음
 		{
-			switch (_getch())
+			switch (_getch())		//상하좌우를 받기위해 한번 더 받음
 			{
-			case UP:
+			case UP:				//위
 				--y;
 				break;
-			case DOWN:
+			case DOWN:				//아래
 				++y;
 				break;
 			}
 		}
-		else if (input == SPACE)
+		else if (input == SPACE)	//키보드 입력이 space일 때
 		{
-			switch (y)
+			switch (y)				//y위치에 따라 판단
 			{
 			case 0:
 				return GAMESTART;
@@ -169,10 +171,10 @@ MENU ReadyGame()
 		}
 	}
 }
-
+//게임 정보창
 void InfoGame()
 {
-	DrawInfoGame();
+	//DrawInfoGame();
 	system("pause>null");
 }
 
@@ -249,9 +251,10 @@ bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 	}
 	return true;
 }
-
+//게임 시작 창
 void StartGame()
 {
+	//음악 재생
 	PlaySound("HYP-Hit.wav", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
 	int life = LIFE;
 	int score = 0;
@@ -346,18 +349,18 @@ void StartGame()
 
 int main(void)
 {
-	SetConsoleView();
+	SetConsoleView();		//프로그램 시작 시 콘솔 크기
 	while (true)
 	{
-		switch (ReadyGame())
+		switch (ReadyGame())//리턴 받아 판단
 		{
 		case GAMESTART:
-			StartGame();
+			StartGame();	//시작 게임창
 			break;
 		case INFO:
-			InfoGame();
+			//InfoGame();		//게임 정보창
 			break;
-		case QUIT:
+		case QUIT:			//나가기
 			return 0;
 		}
 	}
