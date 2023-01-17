@@ -4,6 +4,8 @@
 #include<vector>
 #include<string>
 #include<ctime>
+#include<cstdlib>
+#include<fstream> 
 #pragma comment(lib, "winmm.lib")
 using namespace std;
 
@@ -17,6 +19,7 @@ using namespace std;
 #define KEY_NUM 4
 #define LIFE 3
 #define MAX_LEVEL 11
+
 enum MENU
 {
 	GAMESTART = 0,
@@ -33,14 +36,37 @@ enum KEYBOARD
 };
 
 //콘솔 커서 이동
-void gotoxy(int x, int y)//커서를 특정 위치로 이동
+void gotoxy(int x, int y)//콘솔 내부의 특정 위치로 커서를 이동시키는 함수 입니다.
 {
 	COORD Pos;//x,y를 가지고 있는 구조체 
 	Pos.X = 2 * x;
 	Pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
+//keyboard 입력
+int GetKeyDown()
+{
+	if (_kbhit() != 0)        //키보드에 뭔가 입력이 오면
+	{
+		return _getch();    //입력된 키값을 반환.
+	}
+	return 0;
+}
+//커서 움직이는것 출력
+void DrawUserCursor(int& y)
+{
+	if (y <= 0)			//커서가 위로 그만 올라가게 하기
+	{
+		y = 0;
+	}
+	else if (y >= 2)	//커서가 그만 아래로 내려가게 하기
+	{
+		y = 2;
+	}
 
+	gotoxy(9, 8 + y);	//위치 조정
+	cout << ">";
+}
 //콘솔 크기,타이틀
 void SetConsoleView()
 {
@@ -55,35 +81,18 @@ void DrawReadyGame()//게임 첫 화면 그리기
 	gotoxy(5, 2);
 	cout << "******************************";
 	gotoxy(5, 3);
-	cout << "*        Dance Dance         *";
+	cout << "*        Mini Game         *";
 	gotoxy(5, 4);
 	cout << "******************************";
 	gotoxy(10, 8);
-	cout << "GameStart";
+	cout << "DanceGame";
 	gotoxy(10, 9);
-	cout << "MiniGame";
+	cout << "HangmanGame";
 	gotoxy(10, 10);
 	cout << "Quit" << endl;
 }
-//정보 화면
 
-void DrawGame2()
-{
-	system("cls");
-	gotoxy(1, 3);
-	cout << "*******************************************";
-	gotoxy(1, 4);
-	cout << "|Developer - BlockDMask";
-	gotoxy(1, 5);
-	cout << "|Blog - https://blockdmask.tistory.com/";
-	gotoxy(1, 8);
-	cout << "|Thank you.";
-	gotoxy(1, 9);
-	cout << "*******************************************";
-	gotoxy(1, 10);
-	cout << "|Music - https://www.youtube.com/HYPMUSIC";
-}
-//시작 화면 그리기
+//게임 시작 화면 그리기
 void DrawStartGame(const int life, const int score, const string questionStr, const string answerStr)
 {
 	system("cls");
@@ -103,7 +112,60 @@ void DrawStartGame(const int life, const int score, const string questionStr, co
 	cout << "*******************************************" << endl;
 
 }
+//행맨 미니 게임화면 draw
+void DrawStartGame2(int life, int score, vector<string>& pastWord)
+{
+	system("cls");
+	gotoxy(5, 1);
+	cout << "life = " << life;
+	gotoxy(5, 2);
+	cout << "score = " << score;
+	gotoxy(5, 8);
+	cout << "past = ";
+	for (int i = 0; i < static_cast<int>(pastWord.size()); ++i)
+	{
+		cout << pastWord[i] << " ";
+	}
 
+	gotoxy(5, 12);
+	cout << "input = ";
+	gotoxy(13, 14);
+	cout << "메인화면 'qq'" << endl;
+}
+
+//사전을 세팅하는 함수 입니다. 파일 입출력
+void SetDictionary(vector<string>& strArr)
+{
+	static const int INIT_NUM = 4;
+	static const string str[INIT_NUM] = { "apple", "banana", "code", "program" };    //샘플 단어들
+	ifstream readFromFile("words.txt");        //words.txt 파일을 읽기 전용으로 오픈
+	if (!readFromFile.is_open())            //is_open이 되지 않는다는것은 파일이 존재하지 않다는 뜻.
+	{
+		ofstream writeToFile("words.txt");    //쓰기 전용으로 words.txt 파일을 오픈 (파일이 없으면 자동 생성됨)
+		for (int i = 0; i < INIT_NUM; ++i)    //샘플 단어들을 format에 맞게 words.txt 파일에 입력
+		{
+			string tmp = str[i];
+			if (i != INIT_NUM - 1)
+			{
+				tmp += "\n";
+			}
+			writeToFile.write(tmp.c_str(), tmp.size());    //파일에 쓰는 함수
+			strArr.push_back(str[i]); //단어장(strArr)에 단어를 집어넣습니다.
+		}
+		writeToFile.close();    //쓰기전용파일 닫기
+		return;                    //함수끝
+	}
+
+	//여기로 왔다는것은 읽기전용으로 파일오픈 되었다는뜻.
+	while (!readFromFile.eof())    //파일 끝까지
+	{
+		string tmp;
+		getline(readFromFile, tmp);    //한줄씩 읽어서
+		strArr.push_back(tmp);        //단어장(strArr)에 단어 넣기
+	}
+	readFromFile.close();        //읽기전용파일 닫기
+	return;
+}
 //게임 오버 그리기
 void DrawGameOver(const int playTime)
 {
@@ -116,22 +178,6 @@ void DrawGameOver(const int playTime)
 	gotoxy(8, 11);
 	cout << "-------------------";
 	system("pause>null");
-}
-
-//커서 움직이는것 출력
-void DrawUserCursor(int& y)
-{
-	if (y <= 0)			//커서가 위로 그만 올라가게 하기
-	{
-		y = 0;
-	}
-	else if (y >= 2)	//커서가 그만 아래로 내려가게 하기
-	{
-		y = 2;
-	}
-
-	gotoxy(9, 8 + y);	//위치 조정
-	cout << ">";
 }
 
 //-----------Func-----------------
@@ -171,13 +217,41 @@ MENU ReadyGame()//게임 기능
 		}
 	}
 }
-//게임 정보창
-void InfoGame()
+//행맨게임 시작화면 그리기
+void DrawReadyGame2()
 {
-	DrawGame2();
-	system("pause>null");
+	system("cls");
+	gotoxy(5, 2);
+	cout << "==============================";
+	gotoxy(5, 3);
+	cout << "======= HANG MAN GAME ========";
+	gotoxy(5, 4);
+	cout << "==============================";
+	gotoxy(6, 6);
+	cout << "시작하려면 's'를 눌러주세요";
+	gotoxy(6, 7);
+	cout << "종료하려면 'q'를 눌러주세요";
+	
 }
-
+//행맨 시작화면 기능
+bool MiniReadyGame()
+{
+	DrawReadyGame2();    //시작화면 그리기
+	while (true)
+	{
+		int key = GetKeyDown();                //키가 들어오면
+		if (key == 's' || key == 'S')        //s는 스타트
+		{
+			return true;
+		}
+		else if (key == 'q' || key == 'Q')    //q는 끝
+		{
+			break;
+		}
+	}
+	return false;
+}
+//문제 준비
 void SetQuestion(vector<int>& questionVec, int level)
 {
 	if (level > MAX_LEVEL)
@@ -207,7 +281,7 @@ void SetQuestion(vector<int>& questionVec, int level)
 		}
 	}
 }
-
+//화살표 인식
 void VectorToString(const vector<int> v, string& str)
 {
 	for (int i = 0; i < static_cast<int>(v.size()); ++i)
@@ -229,7 +303,7 @@ void VectorToString(const vector<int> v, string& str)
 		}
 	}
 }
-
+//답안 확인
 bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 {
 	//숫자의 배열이 같다.
@@ -346,7 +420,94 @@ void StartGame()
 		}
 	}
 }
+//행맨 게임 시작 함수
+void StartGame2()
+{
+	int score = 0;
+	vector<string> pastWord;    //입력한 영단어 저장
+	vector<string> strArr;        //맞출 단어장
+	SetDictionary(strArr);        //read from file
 
+	while (true)    //하나의 탄을 표현하는 루프
+	{
+		//1 play
+		int num = 0;
+		srand((unsigned int)time(NULL));    //랜덤함수 
+		num = rand() % static_cast<int>(strArr.size());    //단어장 내에 랜덤한 단어 선택
+
+		string strQuestion;                        // _ _ _ _ _ 로 표현할 변수
+		const string strOriginal = strArr[num];    //단어가 맞는지 정답확인용으로 저장
+		const int originLen = static_cast<int>(strOriginal.length());
+
+		//init
+		for (int i = 0; i < originLen; ++i)
+		{
+			strQuestion += "_";    //정답 길이만큼 "_"
+		}
+
+		int life = originLen + 2;    //생명력은 정답 단어 길이 + 2
+
+		//1 question
+		while (true)    //하나의 단어를 맞추는 루프
+		{
+			DrawStartGame2(life, score, pastWord);    //사용단어, 생명력, 점수표기
+
+			//draw question
+			gotoxy(5, 5);
+			for (int i = 0; i < originLen; ++i)
+			{
+				cout << strQuestion[i] << " ";    // _ _ _ _ 표기
+			}
+			cout << endl;
+
+			//input
+			gotoxy(9, 12);
+			string strInput;
+			cin >> strInput;    //입력 받기.
+			if (strInput == "qq")
+			{
+				return;
+			}
+			pastWord.push_back(strInput);    //한번 입력한 단어는 pastword에서 표기
+
+			if (strInput.length() == 1)        //입력받은 스트링의 길이가 1인경우
+			{
+				//alphabet
+				for (int i = 0; i < originLen; ++i)
+				{
+					if (strOriginal[i] == strInput[0])    //오리지널 단어에 입력한 알파벳이 있는경우
+					{
+						strQuestion[i] = strInput[0];    // 해당 위치의 "_" 를 알파벳으로 바꿔줌 
+					}
+				}
+			}
+			else if (strInput.length() > 1)    //입력받은 스트링의 길이가 1보다 큰 경우
+			{
+				//word
+				if (strOriginal == strInput) //오리지널 단어랑 입력 단어가 같을때 (정답)
+				{
+					//score up !!
+					score += 5;
+					pastWord.clear();
+					break;    //하나의 단어를 맞추는 루프를 나가게되고 다음 탄으로 넘어가게 됩니다.
+				}
+			}
+
+			//틀리거나, 맞거나 어쨋든 입력이 되면 라이프가 무조건 1개씩 깎입니다.
+			life -= 1;
+			if (life < 0)
+			{
+				score -= 5;
+				if (score < 0)
+				{
+					score = 0;
+				}
+				pastWord.clear();
+				break;
+			}
+		}
+	}
+}
 int main(void)
 {
 	SetConsoleView();		//프로그램 시작 시 콘솔 크기
@@ -358,7 +519,7 @@ int main(void)
 			StartGame();	//시작 게임창
 			break;
 		case INFO:
-			InfoGame();		//게임 정보창
+			StartGame2();		//게임 정보창
 			break;
 		case QUIT:			//나가기
 			return 0;

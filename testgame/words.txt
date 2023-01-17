@@ -1,0 +1,10 @@
+apple
+banana
+code
+program
+computer
+test
+game
+recipe
+kitchen
+house
