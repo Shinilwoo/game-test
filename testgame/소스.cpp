@@ -60,14 +60,14 @@ void DrawReadyGame()//게임 첫 화면 그리기
 	cout << "******************************";
 	gotoxy(10, 8);
 	cout << "GameStart";
-//	gotoxy(10, 9);
-//	cout << "GameInfo";
+	gotoxy(10, 9);
+	cout << "MiniGame";
 	gotoxy(10, 10);
 	cout << "Quit" << endl;
 }
 //정보 화면
-/*
-void DrawInfoGame()
+
+void DrawGame2()
 {
 	system("cls");
 	gotoxy(1, 3);
@@ -82,7 +82,7 @@ void DrawInfoGame()
 	cout << "*******************************************";
 	gotoxy(1, 10);
 	cout << "|Music - https://www.youtube.com/HYPMUSIC";
-}*/
+}
 //시작 화면 그리기
 void DrawStartGame(const int life, const int score, const string questionStr, const string answerStr)
 {
@@ -174,7 +174,7 @@ MENU ReadyGame()//게임 기능
 //게임 정보창
 void InfoGame()
 {
-	//DrawInfoGame();
+	DrawGame2();
 	system("pause>null");
 }
 
@@ -358,7 +358,7 @@ int main(void)
 			StartGame();	//시작 게임창
 			break;
 		case INFO:
-			//InfoGame();		//게임 정보창
+			InfoGame();		//게임 정보창
 			break;
 		case QUIT:			//나가기
 			return 0;
