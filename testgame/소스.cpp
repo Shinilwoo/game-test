@@ -10,9 +10,6 @@
 using namespace std;
 
 <<<<<<< HEAD
-#define MAGIC_KEY 224	//»óÇÏÁÂ¿ì È­»ìÇ¥°¡ µé¾î¿Ã¶§ ¸ÕÀú µé¾î¿À´Â ¼ýÀÚ
-#define SPACE 32		//½ºÆä¾î Å° °ª
-=======
 #define MAGIC_KEY 224	//ìƒí•˜ì¢Œìš° í™”ì‚´í‘œê°€ ë“¤ì–´ì˜¬ë•Œ ë¨¼ì € ë“¤ì–´ì˜¤ëŠ” ìˆ«ìž
 #define SPACE 32		//ìŠ¤íŽ˜ì–´ í‚¤ ê°’
 >>>>>>> c478910ff3972ccf048f12ce2a19817a88d748fb
@@ -329,7 +326,7 @@ bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 void StartGame()
 {
 <<<<<<< HEAD
-	//À½¾Ç Àç»ý
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 	PlaySound("Little Fist - Quincas Moreira.mp3", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
 =======
 	//ìŒì•… ìž¬ìƒ
