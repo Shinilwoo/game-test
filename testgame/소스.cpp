@@ -9,10 +9,9 @@
 #pragma comment(lib, "winmm.lib")
 using namespace std;
 
-<<<<<<< HEAD
+
 #define MAGIC_KEY 224	//상하좌우 화살표가 들어올때 먼저 들어오는 숫자
 #define SPACE 32		//스페어 키 값
->>>>>>> c478910ff3972ccf048f12ce2a19817a88d748fb
 #define KEY_NUM 4
 #define LIFE 3
 #define MAX_LEVEL 11
@@ -325,13 +324,10 @@ bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 //게임 시작 창
 void StartGame()
 {
-<<<<<<< HEAD
-	//���� ���
-	PlaySound("Little Fist - Quincas Moreira.mp3", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
-=======
+
 	//음악 재생
-	PlaySound("HYP-Hit.wav", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
->>>>>>> c478910ff3972ccf048f12ce2a19817a88d748fb
+	PlaySound("Little Fist - Quincas Moreira.mp3", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
+
 	int life = LIFE;
 	int score = 0;
 	//재생했을때 현재시간.
