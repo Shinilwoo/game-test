@@ -9,13 +9,8 @@
 #pragma comment(lib, "winmm.lib")
 using namespace std;
 
-//¸®µë°ÔÀÓ By. BlockDMask.
-//[PART1] make screen, change screen, input.
-//[PART2] input&output, question, life.
-//[PART3] setting level, play music, play time
-
-#define MAGIC_KEY 224	//»óÇÏÁÂ¿ì È­»ìÇ¥°¡ µé¾î¿Ã¶§ ¸ÕÀú µé¾î¿À´Â ¼ıÀÚ
-#define SPACE 32		//½ºÆä¾î Å° °ª
+#define MAGIC_KEY 224	//ìƒí•˜ì¢Œìš° í™”ì‚´í‘œê°€ ë“¤ì–´ì˜¬ë•Œ ë¨¼ì € ë“¤ì–´ì˜¤ëŠ” ìˆ«ì
+#define SPACE 32		//ìŠ¤í˜ì–´ í‚¤ ê°’
 #define KEY_NUM 4
 #define LIFE 3
 #define MAX_LEVEL 11
@@ -35,49 +30,49 @@ enum KEYBOARD
 	DOWN = 80
 };
 
-//ÄÜ¼Ö Ä¿¼­ ÀÌµ¿
-void gotoxy(int x, int y)//ÄÜ¼Ö ³»ºÎÀÇ Æ¯Á¤ À§Ä¡·Î Ä¿¼­¸¦ ÀÌµ¿½ÃÅ°´Â ÇÔ¼ö ÀÔ´Ï´Ù.
+//ì½˜ì†” ì»¤ì„œ ì´ë™
+void gotoxy(int x, int y)//ì½˜ì†” ë‚´ë¶€ì˜ íŠ¹ì • ìœ„ì¹˜ë¡œ ì»¤ì„œë¥¼ ì´ë™ì‹œí‚¤ëŠ” í•¨ìˆ˜ ì…ë‹ˆë‹¤.
 {
-	COORD Pos;//x,y¸¦ °¡Áö°í ÀÖ´Â ±¸Á¶Ã¼ 
+	COORD Pos;//x,yë¥¼ ê°€ì§€ê³  ìˆëŠ” êµ¬ì¡°ì²´ 
 	Pos.X = 2 * x;
 	Pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), Pos);
 }
-//keyboard ÀÔ·Â
+//keyboard ì…ë ¥
 int GetKeyDown()
 {
-	if (_kbhit() != 0)        //Å°º¸µå¿¡ ¹º°¡ ÀÔ·ÂÀÌ ¿À¸é
+	if (_kbhit() != 0)        //í‚¤ë³´ë“œì— ë­”ê°€ ì…ë ¥ì´ ì˜¤ë©´
 	{
-		return _getch();    //ÀÔ·ÂµÈ Å°°ªÀ» ¹İÈ¯.
+		return _getch();    //ì…ë ¥ëœ í‚¤ê°’ì„ ë°˜í™˜.
 	}
 	return 0;
 }
-//Ä¿¼­ ¿òÁ÷ÀÌ´Â°Í Ãâ·Â
+//ì»¤ì„œ ì›€ì§ì´ëŠ”ê²ƒ ì¶œë ¥
 void DrawUserCursor(int& y)
 {
-	if (y <= 0)			//Ä¿¼­°¡ À§·Î ±×¸¸ ¿Ã¶ó°¡°Ô ÇÏ±â
+	if (y <= 0)			//ì»¤ì„œê°€ ìœ„ë¡œ ê·¸ë§Œ ì˜¬ë¼ê°€ê²Œ í•˜ê¸°
 	{
 		y = 0;
 	}
-	else if (y >= 2)	//Ä¿¼­°¡ ±×¸¸ ¾Æ·¡·Î ³»·Á°¡°Ô ÇÏ±â
+	else if (y >= 2)	//ì»¤ì„œê°€ ê·¸ë§Œ ì•„ë˜ë¡œ ë‚´ë ¤ê°€ê²Œ í•˜ê¸°
 	{
 		y = 2;
 	}
 
-	gotoxy(9, 8 + y);	//À§Ä¡ Á¶Á¤
+	gotoxy(9, 8 + y);	//ìœ„ì¹˜ ì¡°ì •
 	cout << ">";
 }
-//ÄÜ¼Ö Å©±â,Å¸ÀÌÆ²
+//ì½˜ì†” í¬ê¸°,íƒ€ì´í‹€
 void SetConsoleView()
 {
-	system("mode con:cols=50 lines=20");	//°¡·Î 50, ¼¼·Î 20
-	system("title Dance");				//Å¸ÀÌÆ² Á¤ÇÏ±â
+	system("mode con:cols=50 lines=20");	//ê°€ë¡œ 50, ì„¸ë¡œ 20
+	system("title Dance");				//íƒ€ì´í‹€ ì •í•˜ê¸°
 }
 
 //-----------Draw-----------------
-void DrawReadyGame()//°ÔÀÓ Ã¹ È­¸é ±×¸®±â
+void DrawReadyGame()//ê²Œì„ ì²« í™”ë©´ ê·¸ë¦¬ê¸°
 {
-	system("cls");		//È­¸é¸¦ Å¬¸®¾î ÇØÁÜ
+	system("cls");		//í™”ë©´ë¥¼ í´ë¦¬ì–´ í•´ì¤Œ
 	gotoxy(5, 2);
 	cout << "******************************";
 	gotoxy(5, 3);
@@ -92,7 +87,7 @@ void DrawReadyGame()//°ÔÀÓ Ã¹ È­¸é ±×¸®±â
 	cout << "Quit" << endl;
 }
 
-//°ÔÀÓ ½ÃÀÛ È­¸é ±×¸®±â
+//ê²Œì„ ì‹œì‘ í™”ë©´ ê·¸ë¦¬ê¸°
 void DrawStartGame(const int life, const int score, const string questionStr, const string answerStr)
 {
 	system("cls");
@@ -107,12 +102,12 @@ void DrawStartGame(const int life, const int score, const string questionStr, co
 	gotoxy(4, 10);
 	cout << "A : " << answerStr;
 	gotoxy(4, 12);
-	cout << "SPACE!¸¦ ´­·¯¾ß ÇÕ´Ï´Ù.";
+	cout << "SPACE!ë¥¼ ëˆŒëŸ¬ì•¼ í•©ë‹ˆë‹¤.";
 	gotoxy(2, 18);
 	cout << "*******************************************" << endl;
 
 }
-//Çà¸Ç ¹Ì´Ï °ÔÀÓÈ­¸é draw
+//í–‰ë§¨ ë¯¸ë‹ˆ ê²Œì„í™”ë©´ draw
 void DrawStartGame2(int life, int score, vector<string>& pastWord)
 {
 	system("cls");
@@ -130,43 +125,43 @@ void DrawStartGame2(int life, int score, vector<string>& pastWord)
 	gotoxy(5, 12);
 	cout << "input = ";
 	gotoxy(13, 14);
-	cout << "¸ŞÀÎÈ­¸é 'qq'" << endl;
+	cout << "ë©”ì¸í™”ë©´ 'qq'" << endl;
 }
 
-//»çÀüÀ» ¼¼ÆÃÇÏ´Â ÇÔ¼ö ÀÔ´Ï´Ù. ÆÄÀÏ ÀÔÃâ·Â
+//ì‚¬ì „ì„ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜ ì…ë‹ˆë‹¤. íŒŒì¼ ì…ì¶œë ¥
 void SetDictionary(vector<string>& strArr)
 {
 	static const int INIT_NUM = 4;
-	static const string str[INIT_NUM] = { "apple", "banana", "code", "program" };    //»ùÇÃ ´Ü¾îµé
-	ifstream readFromFile("words.txt");        //words.txt ÆÄÀÏÀ» ÀĞ±â Àü¿ëÀ¸·Î ¿ÀÇÂ
-	if (!readFromFile.is_open())            //is_openÀÌ µÇÁö ¾Ê´Â´Ù´Â°ÍÀº ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê´Ù´Â ¶æ.
+	static const string str[INIT_NUM] = { "apple", "banana", "code", "program" };    //ìƒ˜í”Œ ë‹¨ì–´ë“¤
+	ifstream readFromFile("words.txt");        //words.txt íŒŒì¼ì„ ì½ê¸° ì „ìš©ìœ¼ë¡œ ì˜¤í”ˆ
+	if (!readFromFile.is_open())            //is_openì´ ë˜ì§€ ì•ŠëŠ”ë‹¤ëŠ”ê²ƒì€ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•Šë‹¤ëŠ” ëœ».
 	{
-		ofstream writeToFile("words.txt");    //¾²±â Àü¿ëÀ¸·Î words.txt ÆÄÀÏÀ» ¿ÀÇÂ (ÆÄÀÏÀÌ ¾øÀ¸¸é ÀÚµ¿ »ı¼ºµÊ)
-		for (int i = 0; i < INIT_NUM; ++i)    //»ùÇÃ ´Ü¾îµéÀ» format¿¡ ¸Â°Ô words.txt ÆÄÀÏ¿¡ ÀÔ·Â
+		ofstream writeToFile("words.txt");    //ì“°ê¸° ì „ìš©ìœ¼ë¡œ words.txt íŒŒì¼ì„ ì˜¤í”ˆ (íŒŒì¼ì´ ì—†ìœ¼ë©´ ìë™ ìƒì„±ë¨)
+		for (int i = 0; i < INIT_NUM; ++i)    //ìƒ˜í”Œ ë‹¨ì–´ë“¤ì„ formatì— ë§ê²Œ words.txt íŒŒì¼ì— ì…ë ¥
 		{
 			string tmp = str[i];
 			if (i != INIT_NUM - 1)
 			{
 				tmp += "\n";
 			}
-			writeToFile.write(tmp.c_str(), tmp.size());    //ÆÄÀÏ¿¡ ¾²´Â ÇÔ¼ö
-			strArr.push_back(str[i]); //´Ü¾îÀå(strArr)¿¡ ´Ü¾î¸¦ Áı¾î³Ö½À´Ï´Ù.
+			writeToFile.write(tmp.c_str(), tmp.size());    //íŒŒì¼ì— ì“°ëŠ” í•¨ìˆ˜
+			strArr.push_back(str[i]); //ë‹¨ì–´ì¥(strArr)ì— ë‹¨ì–´ë¥¼ ì§‘ì–´ë„£ìŠµë‹ˆë‹¤.
 		}
-		writeToFile.close();    //¾²±âÀü¿ëÆÄÀÏ ´İ±â
-		return;                    //ÇÔ¼ö³¡
+		writeToFile.close();    //ì“°ê¸°ì „ìš©íŒŒì¼ ë‹«ê¸°
+		return;                    //í•¨ìˆ˜ë
 	}
 
-	//¿©±â·Î ¿Ô´Ù´Â°ÍÀº ÀĞ±âÀü¿ëÀ¸·Î ÆÄÀÏ¿ÀÇÂ µÇ¾ú´Ù´Â¶æ.
-	while (!readFromFile.eof())    //ÆÄÀÏ ³¡±îÁö
+	//ì—¬ê¸°ë¡œ ì™”ë‹¤ëŠ”ê²ƒì€ ì½ê¸°ì „ìš©ìœ¼ë¡œ íŒŒì¼ì˜¤í”ˆ ë˜ì—ˆë‹¤ëŠ”ëœ».
+	while (!readFromFile.eof())    //íŒŒì¼ ëê¹Œì§€
 	{
 		string tmp;
-		getline(readFromFile, tmp);    //ÇÑÁÙ¾¿ ÀĞ¾î¼­
-		strArr.push_back(tmp);        //´Ü¾îÀå(strArr)¿¡ ´Ü¾î ³Ö±â
+		getline(readFromFile, tmp);    //í•œì¤„ì”© ì½ì–´ì„œ
+		strArr.push_back(tmp);        //ë‹¨ì–´ì¥(strArr)ì— ë‹¨ì–´ ë„£ê¸°
 	}
-	readFromFile.close();        //ÀĞ±âÀü¿ëÆÄÀÏ ´İ±â
+	readFromFile.close();        //ì½ê¸°ì „ìš©íŒŒì¼ ë‹«ê¸°
 	return;
 }
-//°ÔÀÓ ¿À¹ö ±×¸®±â
+//ê²Œì„ ì˜¤ë²„ ê·¸ë¦¬ê¸°
 void DrawGameOver(const int playTime)
 {
 	gotoxy(8, 8);
@@ -181,31 +176,31 @@ void DrawGameOver(const int playTime)
 }
 
 //-----------Func-----------------
-MENU ReadyGame()//°ÔÀÓ ±â´É
+MENU ReadyGame()//ê²Œì„ ê¸°ëŠ¥
 {
-	int y = 0;				//Ä¿¼­ÀÇ yÀ§Ä¡
-	int input = 0;			//Å°º¸µå¿¡ ÀÔ·Â¹ŞÀ» º¯¼ö
-	while (true)			//°ÔÀÓ ·çÇÁ
+	int y = 0;				//ì»¤ì„œì˜ yìœ„ì¹˜
+	int input = 0;			//í‚¤ë³´ë“œì— ì…ë ¥ë°›ì„ ë³€ìˆ˜
+	while (true)			//ê²Œì„ ë£¨í”„
 	{
-		DrawReadyGame();	//°ÔÀÓ Ã¹ È­¸é ±×¸®±â
-		DrawUserCursor(y);	//Ä¿¼­ ¿òÁ÷ÀÓ
-		input = _getch();	//_getch():»ç¿ëÀÚ°¡ ÀÔ·ÂÇÑ Å°¿¡ ´ëÇÑ °ªÀ» ¾Æ½ºÅ°ÄÚµå·Î ¹İÈ¯
-		//¡æ¡ç¡è¡é			
-		if (input == MAGIC_KEY)		//224¸¦ ¹ŞÀ½
+		DrawReadyGame();	//ê²Œì„ ì²« í™”ë©´ ê·¸ë¦¬ê¸°
+		DrawUserCursor(y);	//ì»¤ì„œ ì›€ì§ì„
+		input = _getch();	//_getch():ì‚¬ìš©ìê°€ ì…ë ¥í•œ í‚¤ì— ëŒ€í•œ ê°’ì„ ì•„ìŠ¤í‚¤ì½”ë“œë¡œ ë°˜í™˜
+		//â†’â†â†‘â†“			
+		if (input == MAGIC_KEY)		//224ë¥¼ ë°›ìŒ
 		{
-			switch (_getch())		//»óÇÏÁÂ¿ì¸¦ ¹Ş±âÀ§ÇØ ÇÑ¹ø ´õ ¹ŞÀ½
+			switch (_getch())		//ìƒí•˜ì¢Œìš°ë¥¼ ë°›ê¸°ìœ„í•´ í•œë²ˆ ë” ë°›ìŒ
 			{
-			case UP:				//À§
+			case UP:				//ìœ„
 				--y;
 				break;
-			case DOWN:				//¾Æ·¡
+			case DOWN:				//ì•„ë˜
 				++y;
 				break;
 			}
 		}
-		else if (input == SPACE)	//Å°º¸µå ÀÔ·ÂÀÌ spaceÀÏ ¶§
+		else if (input == SPACE)	//í‚¤ë³´ë“œ ì…ë ¥ì´ spaceì¼ ë•Œ
 		{
-			switch (y)				//yÀ§Ä¡¿¡ µû¶ó ÆÇ´Ü
+			switch (y)				//yìœ„ì¹˜ì— ë”°ë¼ íŒë‹¨
 			{
 			case 0:
 				return GAMESTART;
@@ -217,7 +212,7 @@ MENU ReadyGame()//°ÔÀÓ ±â´É
 		}
 	}
 }
-//Çà¸Ç°ÔÀÓ ½ÃÀÛÈ­¸é ±×¸®±â
+//í–‰ë§¨ê²Œì„ ì‹œì‘í™”ë©´ ê·¸ë¦¬ê¸°
 void DrawReadyGame2()
 {
 	system("cls");
@@ -228,30 +223,30 @@ void DrawReadyGame2()
 	gotoxy(5, 4);
 	cout << "==============================";
 	gotoxy(6, 6);
-	cout << "½ÃÀÛÇÏ·Á¸é 's'¸¦ ´­·¯ÁÖ¼¼¿ä";
+	cout << "ì‹œì‘í•˜ë ¤ë©´ 's'ë¥¼ ëˆŒëŸ¬ì£¼ì„¸ìš”";
 	gotoxy(6, 7);
-	cout << "Á¾·áÇÏ·Á¸é 'q'¸¦ ´­·¯ÁÖ¼¼¿ä";
+	cout << "ì¢…ë£Œí•˜ë ¤ë©´ 'q'ë¥¼ ëˆŒëŸ¬ì£¼ì„¸ìš”";
 	
 }
-//Çà¸Ç ½ÃÀÛÈ­¸é ±â´É
+//í–‰ë§¨ ì‹œì‘í™”ë©´ ê¸°ëŠ¥
 bool MiniReadyGame()
 {
-	DrawReadyGame2();    //½ÃÀÛÈ­¸é ±×¸®±â
+	DrawReadyGame2();    //ì‹œì‘í™”ë©´ ê·¸ë¦¬ê¸°
 	while (true)
 	{
-		int key = GetKeyDown();                //Å°°¡ µé¾î¿À¸é
-		if (key == 's' || key == 'S')        //s´Â ½ºÅ¸Æ®
+		int key = GetKeyDown();                //í‚¤ê°€ ë“¤ì–´ì˜¤ë©´
+		if (key == 's' || key == 'S')        //sëŠ” ìŠ¤íƒ€íŠ¸
 		{
 			return true;
 		}
-		else if (key == 'q' || key == 'Q')    //q´Â ³¡
+		else if (key == 'q' || key == 'Q')    //qëŠ” ë
 		{
 			break;
 		}
 	}
 	return false;
 }
-//¹®Á¦ ÁØºñ
+//ë¬¸ì œ ì¤€ë¹„
 void SetQuestion(vector<int>& questionVec, int level)
 {
 	if (level > MAX_LEVEL)
@@ -261,9 +256,9 @@ void SetQuestion(vector<int>& questionVec, int level)
 
 	int num = 0;
 	srand((unsigned int)time(NULL));
-	for (int i = 0; i < level; ++i)	//È­»ìÇ¥ÀÇ °³¼ö (¹®Á¦ ³­ÀÌµµ)
+	for (int i = 0; i < level; ++i)	//í™”ì‚´í‘œì˜ ê°œìˆ˜ (ë¬¸ì œ ë‚œì´ë„)
 	{
-		num = rand() % KEY_NUM;	//È­»ìÇ¥ Á¾·ù.
+		num = rand() % KEY_NUM;	//í™”ì‚´í‘œ ì¢…ë¥˜.
 		switch (num)
 		{
 		case 0:
@@ -281,7 +276,7 @@ void SetQuestion(vector<int>& questionVec, int level)
 		}
 	}
 }
-//È­»ìÇ¥ ÀÎ½Ä
+//í™”ì‚´í‘œ ì¸ì‹
 void VectorToString(const vector<int> v, string& str)
 {
 	for (int i = 0; i < static_cast<int>(v.size()); ++i)
@@ -289,58 +284,58 @@ void VectorToString(const vector<int> v, string& str)
 		switch (v[i])
 		{
 		case UP:
-			str += "¡è ";
+			str += "â†‘ ";
 			break;
 		case DOWN:
-			str += "¡é ";
+			str += "â†“ ";
 			break;
 		case LEFT:
-			str += "¡ç ";
+			str += "â† ";
 			break;
 		case RIGHT:
-			str += "¡æ ";
+			str += "â†’ ";
 			break;
 		}
 	}
 }
-//´ä¾È È®ÀÎ
+//ë‹µì•ˆ í™•ì¸
 bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 {
-	//¼ıÀÚÀÇ ¹è¿­ÀÌ °°´Ù.
-	//±æÀÌ Ã¼Å©
+	//ìˆ«ìì˜ ë°°ì—´ì´ ê°™ë‹¤.
+	//ê¸¸ì´ ì²´í¬
 	if (questionVec.size() != answerVec.size())
 	{
-		//±æÀÌ ´Ù¸£³×
+		//ê¸¸ì´ ë‹¤ë¥´ë„¤
 		return false;
 	}
 
-	//³»¿ë¹° Ã¼Å©
+	//ë‚´ìš©ë¬¼ ì²´í¬
 	for (int i = 0; i < static_cast<int>(questionVec.size()); ++i)
 	{
 		if (questionVec[i] != answerVec[i])
 		{
-			//´Ù¸¥°Ô ÀÖ³×.
+			//ë‹¤ë¥¸ê²Œ ìˆë„¤.
 			return false;
 		}
 	}
 	return true;
 }
-//°ÔÀÓ ½ÃÀÛ Ã¢
+//ê²Œì„ ì‹œì‘ ì°½
 void StartGame()
 {
-	//À½¾Ç Àç»ı
+	//ìŒì•… ì¬ìƒ
 	PlaySound("HYP-Hit.wav", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
 	int life = LIFE;
 	int score = 0;
-	//Àç»ıÇßÀ»¶§ ÇöÀç½Ã°£.
+	//ì¬ìƒí–ˆì„ë•Œ í˜„ì¬ì‹œê°„.
 	clock_t startTime, endTime;
 	startTime = clock();
 
-	//¡æ¡ç¡è¡é, d a w s
-	//¹®Á¦
+	//â†’â†â†‘â†“, d a w s
+	//ë¬¸ì œ
 	vector<int> questionVec;
 	string questionStr = "";
-	//´ä¾ÈÁö
+	//ë‹µì•ˆì§€
 	vector<int> answerVec;
 	string answerStr = "";
 
@@ -350,18 +345,18 @@ void StartGame()
 	{
 		int level = (score / 30) + 1;
 
-		//¹®Á¦¸¦ ¼¼ÆÃ
+		//ë¬¸ì œë¥¼ ì„¸íŒ…
 		SetQuestion(questionVec, level);
-		//¹®Á¦¸¦ º¸¿©ÁÖ±â.
+		//ë¬¸ì œë¥¼ ë³´ì—¬ì£¼ê¸°.
 		VectorToString(questionVec, questionStr);
 		while (true)
 		{
-			//1¹®Á¦¸¦ °¡Áö°í ¹®Á¦¸¦ Ç¬´Ù.
+			//1ë¬¸ì œë¥¼ ê°€ì§€ê³  ë¬¸ì œë¥¼ í‘¼ë‹¤.
 			DrawStartGame(life, score, questionStr, answerStr);
 
 			if (life == 0)
 			{
-				//°ÔÀÓ ¿À¹öÀÏ¶§ ÇöÀç½Ã°£
+				//ê²Œì„ ì˜¤ë²„ì¼ë•Œ í˜„ì¬ì‹œê°„
 				endTime = clock();
 				int playTime = static_cast<int>((endTime - startTime) / CLOCKS_PER_SEC);
 
@@ -370,7 +365,7 @@ void StartGame()
 				return;
 			}
 
-			//Á¤´ä ÇÏ³ª¾¿ ÀÔ·Â.
+			//ì •ë‹µ í•˜ë‚˜ì”© ì…ë ¥.
 			firstInput = _getch();
 			if (firstInput == MAGIC_KEY)
 			{
@@ -379,30 +374,30 @@ void StartGame()
 				switch (secondInput)
 				{
 				case UP:
-					answerStr += "¡è ";
+					answerStr += "â†‘ ";
 					break;
 				case DOWN:
-					answerStr += "¡é ";
+					answerStr += "â†“ ";
 					break;
 				case LEFT:
-					answerStr += "¡ç ";
+					answerStr += "â† ";
 					break;
 				case RIGHT:
-					answerStr += "¡æ ";
+					answerStr += "â†’ ";
 					break;
 				}
 			}
 			else if (firstInput == SPACE)
 			{
-				//´ä¾È Á¦Ãâ
-				//´ä¾È È®ÀÎ
+				//ë‹µì•ˆ ì œì¶œ
+				//ë‹µì•ˆ í™•ì¸
 				if (CheckAnswer(questionVec, answerVec))
 				{
 					score += 10;
 				}
 				else
 				{
-					//Æ²·È´Ù.
+					//í‹€ë ¸ë‹¤.
 					--life;
 					score -= 5;
 					if (score < 0)
@@ -420,80 +415,80 @@ void StartGame()
 		}
 	}
 }
-//Çà¸Ç °ÔÀÓ ½ÃÀÛ ÇÔ¼ö
+//í–‰ë§¨ ê²Œì„ ì‹œì‘ í•¨ìˆ˜
 void StartGame2()
 {
 	int score = 0;
-	vector<string> pastWord;    //ÀÔ·ÂÇÑ ¿µ´Ü¾î ÀúÀå
-	vector<string> strArr;        //¸ÂÃâ ´Ü¾îÀå
+	vector<string> pastWord;    //ì…ë ¥í•œ ì˜ë‹¨ì–´ ì €ì¥
+	vector<string> strArr;        //ë§ì¶œ ë‹¨ì–´ì¥
 	SetDictionary(strArr);        //read from file
 
-	while (true)    //ÇÏ³ªÀÇ ÅºÀ» Ç¥ÇöÇÏ´Â ·çÇÁ
+	while (true)    //í•˜ë‚˜ì˜ íƒ„ì„ í‘œí˜„í•˜ëŠ” ë£¨í”„
 	{
 		//1 play
 		int num = 0;
-		srand((unsigned int)time(NULL));    //·£´ıÇÔ¼ö 
-		num = rand() % static_cast<int>(strArr.size());    //´Ü¾îÀå ³»¿¡ ·£´ıÇÑ ´Ü¾î ¼±ÅÃ
+		srand((unsigned int)time(NULL));    //ëœë¤í•¨ìˆ˜ 
+		num = rand() % static_cast<int>(strArr.size());    //ë‹¨ì–´ì¥ ë‚´ì— ëœë¤í•œ ë‹¨ì–´ ì„ íƒ
 
-		string strQuestion;                        // _ _ _ _ _ ·Î Ç¥ÇöÇÒ º¯¼ö
-		const string strOriginal = strArr[num];    //´Ü¾î°¡ ¸Â´ÂÁö Á¤´äÈ®ÀÎ¿ëÀ¸·Î ÀúÀå
+		string strQuestion;                        // _ _ _ _ _ ë¡œ í‘œí˜„í•  ë³€ìˆ˜
+		const string strOriginal = strArr[num];    //ë‹¨ì–´ê°€ ë§ëŠ”ì§€ ì •ë‹µí™•ì¸ìš©ìœ¼ë¡œ ì €ì¥
 		const int originLen = static_cast<int>(strOriginal.length());
 
 		//init
 		for (int i = 0; i < originLen; ++i)
 		{
-			strQuestion += "_";    //Á¤´ä ±æÀÌ¸¸Å­ "_"
+			strQuestion += "_";    //ì •ë‹µ ê¸¸ì´ë§Œí¼ "_"
 		}
 
-		int life = originLen + 2;    //»ı¸í·ÂÀº Á¤´ä ´Ü¾î ±æÀÌ + 2
+		int life = originLen + 2;    //ìƒëª…ë ¥ì€ ì •ë‹µ ë‹¨ì–´ ê¸¸ì´ + 2
 
 		//1 question
-		while (true)    //ÇÏ³ªÀÇ ´Ü¾î¸¦ ¸ÂÃß´Â ·çÇÁ
+		while (true)    //í•˜ë‚˜ì˜ ë‹¨ì–´ë¥¼ ë§ì¶”ëŠ” ë£¨í”„
 		{
-			DrawStartGame2(life, score, pastWord);    //»ç¿ë´Ü¾î, »ı¸í·Â, Á¡¼öÇ¥±â
+			DrawStartGame2(life, score, pastWord);    //ì‚¬ìš©ë‹¨ì–´, ìƒëª…ë ¥, ì ìˆ˜í‘œê¸°
 
 			//draw question
 			gotoxy(5, 5);
 			for (int i = 0; i < originLen; ++i)
 			{
-				cout << strQuestion[i] << " ";    // _ _ _ _ Ç¥±â
+				cout << strQuestion[i] << " ";    // _ _ _ _ í‘œê¸°
 			}
 			cout << endl;
 
 			//input
 			gotoxy(9, 12);
 			string strInput;
-			cin >> strInput;    //ÀÔ·Â ¹Ş±â.
+			cin >> strInput;    //ì…ë ¥ ë°›ê¸°.
 			if (strInput == "qq")
 			{
 				return;
 			}
-			pastWord.push_back(strInput);    //ÇÑ¹ø ÀÔ·ÂÇÑ ´Ü¾î´Â pastword¿¡¼­ Ç¥±â
+			pastWord.push_back(strInput);    //í•œë²ˆ ì…ë ¥í•œ ë‹¨ì–´ëŠ” pastwordì—ì„œ í‘œê¸°
 
-			if (strInput.length() == 1)        //ÀÔ·Â¹ŞÀº ½ºÆ®¸µÀÇ ±æÀÌ°¡ 1ÀÎ°æ¿ì
+			if (strInput.length() == 1)        //ì…ë ¥ë°›ì€ ìŠ¤íŠ¸ë§ì˜ ê¸¸ì´ê°€ 1ì¸ê²½ìš°
 			{
 				//alphabet
 				for (int i = 0; i < originLen; ++i)
 				{
-					if (strOriginal[i] == strInput[0])    //¿À¸®Áö³Î ´Ü¾î¿¡ ÀÔ·ÂÇÑ ¾ËÆÄºªÀÌ ÀÖ´Â°æ¿ì
+					if (strOriginal[i] == strInput[0])    //ì˜¤ë¦¬ì§€ë„ ë‹¨ì–´ì— ì…ë ¥í•œ ì•ŒíŒŒë²³ì´ ìˆëŠ”ê²½ìš°
 					{
-						strQuestion[i] = strInput[0];    // ÇØ´ç À§Ä¡ÀÇ "_" ¸¦ ¾ËÆÄºªÀ¸·Î ¹Ù²ãÁÜ 
+						strQuestion[i] = strInput[0];    // í•´ë‹¹ ìœ„ì¹˜ì˜ "_" ë¥¼ ì•ŒíŒŒë²³ìœ¼ë¡œ ë°”ê¿”ì¤Œ 
 					}
 				}
 			}
-			else if (strInput.length() > 1)    //ÀÔ·Â¹ŞÀº ½ºÆ®¸µÀÇ ±æÀÌ°¡ 1º¸´Ù Å« °æ¿ì
+			else if (strInput.length() > 1)    //ì…ë ¥ë°›ì€ ìŠ¤íŠ¸ë§ì˜ ê¸¸ì´ê°€ 1ë³´ë‹¤ í° ê²½ìš°
 			{
 				//word
-				if (strOriginal == strInput) //¿À¸®Áö³Î ´Ü¾î¶û ÀÔ·Â ´Ü¾î°¡ °°À»¶§ (Á¤´ä)
+				if (strOriginal == strInput) //ì˜¤ë¦¬ì§€ë„ ë‹¨ì–´ë‘ ì…ë ¥ ë‹¨ì–´ê°€ ê°™ì„ë•Œ (ì •ë‹µ)
 				{
 					//score up !!
 					score += 5;
 					pastWord.clear();
-					break;    //ÇÏ³ªÀÇ ´Ü¾î¸¦ ¸ÂÃß´Â ·çÇÁ¸¦ ³ª°¡°ÔµÇ°í ´ÙÀ½ ÅºÀ¸·Î ³Ñ¾î°¡°Ô µË´Ï´Ù.
+					break;    //í•˜ë‚˜ì˜ ë‹¨ì–´ë¥¼ ë§ì¶”ëŠ” ë£¨í”„ë¥¼ ë‚˜ê°€ê²Œë˜ê³  ë‹¤ìŒ íƒ„ìœ¼ë¡œ ë„˜ì–´ê°€ê²Œ ë©ë‹ˆë‹¤.
 				}
 			}
 
-			//Æ²¸®°Å³ª, ¸Â°Å³ª ¾îÂ¶µç ÀÔ·ÂÀÌ µÇ¸é ¶óÀÌÇÁ°¡ ¹«Á¶°Ç 1°³¾¿ ±ğÀÔ´Ï´Ù.
+			//í‹€ë¦¬ê±°ë‚˜, ë§ê±°ë‚˜ ì–´ì¨‹ë“  ì…ë ¥ì´ ë˜ë©´ ë¼ì´í”„ê°€ ë¬´ì¡°ê±´ 1ê°œì”© ê¹ì…ë‹ˆë‹¤.
 			life -= 1;
 			if (life < 0)
 			{
@@ -510,18 +505,18 @@ void StartGame2()
 }
 int main(void)
 {
-	SetConsoleView();		//ÇÁ·Î±×·¥ ½ÃÀÛ ½Ã ÄÜ¼Ö Å©±â
+	SetConsoleView();		//í”„ë¡œê·¸ë¨ ì‹œì‘ ì‹œ ì½˜ì†” í¬ê¸°
 	while (true)
 	{
-		switch (ReadyGame())//¸®ÅÏ ¹Ş¾Æ ÆÇ´Ü
+		switch (ReadyGame())//ë¦¬í„´ ë°›ì•„ íŒë‹¨
 		{
 		case GAMESTART:
-			StartGame();	//½ÃÀÛ °ÔÀÓÃ¢
+			StartGame();	//ì‹œì‘ ê²Œì„ì°½
 			break;
 		case INFO:
-			StartGame2();		//°ÔÀÓ Á¤º¸Ã¢
+			StartGame2();		//ê²Œì„ ì •ë³´ì°½
 			break;
-		case QUIT:			//³ª°¡±â
+		case QUIT:			//ë‚˜ê°€ê¸°
 			return 0;
 		}
 	}
