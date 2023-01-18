@@ -9,11 +9,6 @@
 #pragma comment(lib, "winmm.lib")
 using namespace std;
 
-//리듬게임 By. BlockDMask.
-//[PART1] make screen, change screen, input.
-//[PART2] input&output, question, life.
-//[PART3] setting level, play music, play time
-
 #define MAGIC_KEY 224	//상하좌우 화살표가 들어올때 먼저 들어오는 숫자
 #define SPACE 32		//스페어 키 값
 #define KEY_NUM 4
@@ -329,7 +324,7 @@ bool CheckAnswer(const vector<int> questionVec, const vector<int> answerVec)
 void StartGame()
 {
 	//음악 재생
-	PlaySound("HYP-Hit.wav", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
+	PlaySound("Little Fist - Quincas Moreira.mp3", NULL, SND_NODEFAULT | SND_ASYNC | SND_LOOP);
 	int life = LIFE;
 	int score = 0;
 	//재생했을때 현재시간.
