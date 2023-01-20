@@ -514,10 +514,10 @@ int main(void)
 		switch (ReadyGame())//리턴 받아 판단
 		{
 		case GAMESTART:
-			StartGame();	//시작 게임창
+			StartGame();	//리듬 게임창
 			break;
 		case GAMESTART2:
-			StartGame2();		//게임 정보창
+			StartGame2();		//행맨 게임창
 			break;
 		case QUIT:			//나가기
 			return 0;
