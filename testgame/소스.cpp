@@ -516,7 +516,7 @@ int main(void)
 		case GAMESTART:
 			StartGame();	//시작 게임창
 			break;
-		case INFO:
+		case GAMESTART2:
 			StartGame2();		//게임 정보창
 			break;
 		case QUIT:			//나가기
